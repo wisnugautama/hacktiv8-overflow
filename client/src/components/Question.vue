@@ -1,0 +1,56 @@
+<template>
+    <v-container>
+        <h1>All Questions</h1>
+        <br>
+        <v-layout>
+            <v-flex>
+            <v-card v-for="(data,i) in question_list" v-bind:key="i" class="tes">
+                <v-card-title primary-title>
+                <div>
+                    <h3 class="headline mb-0"> {{ data.title }} </h3>
+                    <div> {{ data.description }} </div>
+                    <hr>
+                </div>
+                </v-card-title>
+
+                <v-card-actions>
+                    <router-link :to="`/forum/question/${data._id}`">
+                        <v-btn flat color="orange">Show</v-btn>
+                    </router-link>
+                <v-btn flat color="orange">Explore</v-btn>
+                </v-card-actions>
+                
+            </v-card>
+            </v-flex>
+        </v-layout>
+    </v-container>
+</template>
+
+<script>
+import { mapActions, mapState } from "vuex";
+export default {
+    
+    computed: {
+        ...mapState({
+            question_list: 'question_list'
+        })
+    },
+
+    methods: {
+        ...mapActions([
+            'getAllQuestion'
+        ])
+    },
+
+    created () {
+        this.getAllQuestion()
+
+    }
+}
+</script>
+
+<style scoped>
+    .tes {
+        margin-bottom: 50px;
+    }
+</style>
