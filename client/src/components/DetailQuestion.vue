@@ -12,42 +12,103 @@
                 <v-container>
                     <h2>Please Answer Here</h2>
                     <br>
-                    <wysiwyg/>
+                    <wysiwyg v-if="check_login" v-model="answerNew" />
+                    <div v-if="!check_login">
+                        <h3>Please Login First to Answer</h3>
+                        <v-btn color="blue" to="/login">Login</v-btn>
+                    </div>
                 </v-container>
                 <v-card-actions>
-                <v-btn flat color="orange">Show</v-btn>
                 <v-btn flat color="orange" to="/forum">Back</v-btn>
+                <v-btn flat color="orange" @click="submitAnswer">Answer</v-btn>
+                <v-btn flat color="orange" @click="likeQuestion(question._id)">Like</v-btn>
+                <v-btn flat color="orange" @click="dislikeQuestion(question._id)">Dislike</v-btn>
                 </v-card-actions>
             </v-card>
             </v-flex>
         </v-layout>
+        <Answer :answerProps="answer"></Answer>
     </v-container>
 </template>
 
 <script>
 import axios from 'axios'
 import { mapState, mapActions } from "vuex";
+import Answer from '@/components/Answer.vue';
+import swal from 'sweetalert2';
 export default {
+    components: {
+        Answer
+    },
+
     data () {
         return {
-            question: ''
+            answerNew: '',
+            check_login: localStorage.getItem('token')
         }
     },
 
+    computed: {
+        ...mapState({
+            question: 'question',
+            answer: 'answer'
+        })
+    },
+
+    methods: {
+        ...mapActions([
+            'createAnswer',
+            'getOneQuestion',
+            'getAllAnswer'
+        ]),
+
+        submitAnswer () {
+            let obj = {
+                answer: this.answerNew,
+                questionId: this.$route.params.id
+            }
+            this.createAnswer(obj)
+            this.answerNew = ''
+        },
+
+        likeQuestion (id) {
+            axios({
+                method: 'put',
+                url: `http://localhost:3000/questions/like/${id}`,
+                headers: {
+                    token: localStorage.getItem('token')
+                }
+            })
+                .then((result) => {
+                    console.log(result);
+                    swal(result.data.message)
+                })
+                .catch((err) => {
+                    
+                });
+        },
+
+        dislikeQuestion (id) {
+            axios({
+                method: 'put',
+                url: `http://localhost:3000/questions/dislike/${id}`,
+                headers: {
+                    token: localStorage.getItem('token')
+                }
+            })
+                .then((result) => {
+                    console.log(result);
+                    swal(result.data.message)
+                })
+                .catch((err) => {
+                    
+                });
+        },
+    },
+
     created () {
-        let id = this.$route.params.id
-        axios({
-            method: 'get',
-            url: `http://localhost:3000/questions/${id}`
-        })
-
-        .then((result) => {
-            this.question = result.data.data
-        })
-
-        .catch((err) => {
-        
-        });
+        this.getAllAnswer(this.$route.params.id)
+        this.getOneQuestion(this.$route.params.id)
     }
 }
 </script>

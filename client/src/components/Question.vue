@@ -6,10 +6,10 @@
             <v-flex>
             <v-card v-for="(data,i) in question_list" v-bind:key="i" class="tes">
                 <v-card-title primary-title>
-                <div>
+                <div class="kontent">
                     <h3 class="headline mb-0"> {{ data.title }} </h3>
-                    <div> {{ data.description }} </div>
                     <hr>
+                    <div> {{ data.description }} </div>
                 </div>
                 </v-card-title>
 
@@ -17,7 +17,6 @@
                     <router-link :to="`/forum/question/${data._id}`">
                         <v-btn flat color="orange">Show</v-btn>
                     </router-link>
-                <v-btn flat color="orange">Explore</v-btn>
                 </v-card-actions>
                 
             </v-card>
@@ -52,5 +51,10 @@ export default {
 <style scoped>
     .tes {
         margin-bottom: 50px;
+        
+    }
+
+    .kontent {
+        min-width: 100%;
     }
 </style>

@@ -14,6 +14,10 @@
                 <v-btn class="mx-0" color="black" @click="update">
                     Submit
                 </v-btn>
+
+                <v-btn class="mx-0" color="black" to="/question">
+                    Back
+                </v-btn>
                 </v-flex>
             </v-layout>
             </v-container>
@@ -83,5 +87,9 @@ export default {
 <style scoped>
     .jumbo {
         border: 1px solid black;
+    }
+
+    v-btn {
+        margin-right: 20px;
     }
 </style>

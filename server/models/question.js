@@ -10,14 +10,9 @@ var questionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    answer: [{
-        userId: String,
-        name: String,
-        answer: String,
-        date: Date
-
-    }],
-    userId: { type: Schema.Types.ObjectId, ref: 'User' }
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
+    like: [],
+    dislike: []
 },{
     timestamps: true
 })

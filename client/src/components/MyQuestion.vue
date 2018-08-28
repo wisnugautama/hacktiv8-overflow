@@ -50,6 +50,12 @@ export default {
         }
     },
 
+    watch: {
+        my_questions: function () {
+            this.getMyQuestion()
+        }
+    },
+
     created () {
         this.getMyQuestion()
 

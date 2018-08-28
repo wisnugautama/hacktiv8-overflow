@@ -10,7 +10,12 @@ export default new Vuex.Store({
     question_list: [],
     my_questions: [],
     title: '',
-    description: ''
+    description: '',
+    question: '',
+    answer: '',
+    token: '',
+    user_login: '',
+    created: ''
   },
 
   mutations: {
@@ -28,6 +33,26 @@ export default new Vuex.Store({
 
     setDescription (state,payload) {
       state.description = payload
+    },
+
+    setOneQuestion(state,payload) {
+      state.question = payload
+    },
+
+    setAnswer(state,payload) {
+      state.answer = payload
+    },
+
+    setToken(state,payload) {
+      state.token = payload
+    },
+
+    setUserLogin(sate, payload) {
+      sate.user_login = payload
+    },
+
+    setYangBuat(state,payload) {
+      state.created = payload
     }
   },
 
@@ -69,9 +94,8 @@ export default new Vuex.Store({
         .then((result) => {
           swal(result.data.message)
           localStorage.setItem('token', result.data.token)
-          this.state.cek_token = localStorage.getItem('token')
+          context.commit('setToken', localStorage.getItem('token'))
           router.push('/')
-          router.go()
         })
         .catch((err) => {
           swal(err.message)
@@ -119,6 +143,9 @@ export default new Vuex.Store({
         .then((result) => {
           context.commit('setTitle', result.data.data.title)
           context.commit('setDescription', result.data.data.description)
+          context.commit('setOneQuestion', result.data.data)
+          context.commit('setYangBuat', result.data.data.userId.name)
+          // console.log(result.data.data.userId.name);
         })
         .catch((err) => {
           
@@ -178,6 +205,40 @@ export default new Vuex.Store({
           swal(result.data.message);
           router.push('/question')
           
+        })
+        .catch((err) => {
+          
+        });
+    },
+
+    createAnswer (context, data) {
+      axios({
+        method: 'post',
+        url: `http://localhost:3000/answers`,
+        headers: {
+          token: localStorage.getItem('token')
+        },
+        data: {
+          answer: data.answer,
+          questionId: data.questionId,
+        }
+      })
+        .then((result) => {
+          // console.log(result);
+          swal(result.data.message)
+        })
+        .catch((err) => {
+          
+        });
+    },
+
+    getAllAnswer (context, data) {
+      axios({
+        method: 'get',
+        url: `http://localhost:3000/answers/${data}`,
+      })
+        .then((result) => {
+          context.commit('setAnswer', result.data.data)
         })
         .catch((err) => {
           

@@ -1,55 +1,57 @@
-const Question = require('../models/question')
+const Answer = require('../models/answer')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
-const createQuestion = (req,res) => {
-    const { title,description } = req.body
+const createAnswer = (req, res) => {
     let token = req.headers.token
     let decode = jwt.verify(token, process.env.JWT_KEY)
-
-    Question.create({
-        title: title,
-        description: description,
+    Answer.create({
+        answer: req.body.answer,
+        questionId: req.body.questionId,
         userId: decode.id
     })
-        .then((data_question) => {
+        .then((result) => {
             res.status(201).json({
-                message: `Question Successfully Created!`,
-                data: data_question
+                message: `Answer Created!`,
+                data: result
             })
         })
         .catch((err) => {
             res.status(400).json({
-                message: `Internal Server Error!`
+                message: err.message
             })
         });
 }
 
-const getAllQuestion = (req,res) => {
-    Question.find()
-        .then((data_questions) => {
+const getAllAnswer = (req, res) => {
+    Answer.find({
+        questionId: req.params.question
+    })
+        .populate('userId')
+        .then((result) => {
             res.status(200).json({
-                message: `Success get all questions list`,
-                data: data_questions
+                message: `Success get All Answer with questionId ${result._id}`,
+                data: result
             })
         })
         .catch((err) => {
             res.status(400).json({
-                message: `Internal Server Error!`
+                message: err.message
             })
         });
 }
 
-const getOneQuestion = (req,res) => {
-    let id = req.params.id
-
-    Question.findOne({
-        _id: id
+const getOneAnswer = (req, res) => {
+    let token = req.headers.token
+    let decode = jwt.verify(token, process.env.JWT_KEY)
+    Answer.findOne({
+        _id: req.params.id,
+        userId: decode.id
     })
-        .then((data_question) => {
+        .then((result) => {
             res.status(200).json({
-                message: `Successfully get a question with id ${data_question._id}`,
-                data: data_question
+                message: `Success get answer with id ${req.params.id}`,
+                data: result
             })
         })
         .catch((err) => {
@@ -59,66 +61,19 @@ const getOneQuestion = (req,res) => {
         });
 }
 
-const deleteQuestion = (req,res) => {
-    let id = req.params.id
-
-    Question.deleteOne({
-        _id: id
-    })
-        .then(() => {
-            res.status(201).json({
-                message: `Question Succesfully Deleted!`
-            })
-        })
-        .catch((err) => {
-            console.log(err);
-            res.status(400).json({
-                message: err.message
-            })
-        });
-}
-
-const getMyQuestions = (req,res) => {
+const updateAnswer = (req, res) => {
+    const { answer } = req.body
     let token = req.headers.token
     let decode = jwt.verify(token, process.env.JWT_KEY)
-
-    Question.find({
+    Answer.update({
+        _id: req.params.id,
         userId: decode.id
-    })
-        .then((questions) => {
-            if (questions.length == 0) {
-                res.status(200).json({
-                    message: `Success get all my questions`,
-                    data: []
-                })
-            }else {
-                res.status(200).json({
-                    message: `Success get all my questions`,
-                    data: questions
-                })
-            }
-        }).catch((err) => {
-            res.status(400).json({
-                message: `Internal server Error`
-            })
-        });
-}
-
-const updateQuestion = (req,res) => {
-    const { title,description } = req.body
-    let id = req.params.id
-    let token = req.headers.token
-    let decode = jwt.verify(token, process.env.JWT_KEY)
-    Question.updateOne({
-        _id: id,
-        userId: decode.id
-    },{
-        title: title,
-        description: description
-    })
-        .then(() => {
+    }, {
+            answer: answer
+        })
+        .then((result) => {
             res.status(201).json({
-                message: `Successfully update a Question`,
+                message: `answer successfully updated`
             })
         })
         .catch((err) => {
@@ -128,22 +83,22 @@ const updateQuestion = (req,res) => {
         });
 }
 
-const likeQuestion = (req, res) => {
+const likeAnswer = (req, res) => {
     let token = req.headers.token
     let decode = jwt.verify(token, process.env.JWT_KEY)
-    Question.findOne({
+    Answer.findOne({
         _id: req.params.id
     })
-        .then((data_question) => {
-            if (data_question.userId == decode.id) {
+        .then((data_answers) => {
+            if (data_answers.userId == decode.id) {
                 res.status(200).json({
                     message: `tidak boleh vote diri sendiri!`
                 })
             }
             else {
                 let status = false
-                for (let i = 0; i < data_question.like.length; i++) {
-                    if (data_question.like[i].userId == decode.id) {
+                for (let i = 0; i < data_answers.like.length; i++) {
+                    if (data_answers.like[i].userId == decode.id) {
                         status = true
                     }
                 }
@@ -153,7 +108,7 @@ const likeQuestion = (req, res) => {
                     })
                 }
                 else {
-                    Question.updateOne({
+                    Answer.updateOne({
                         _id: req.params.id
                     }, {
                             $push: { like: { userId: decode.id } }
@@ -178,22 +133,22 @@ const likeQuestion = (req, res) => {
         });
 }
 
-const dislikeQuestion = (req, res) => {
+const dislikeAnswer = (req, res) => {
     let token = req.headers.token
     let decode = jwt.verify(token, process.env.JWT_KEY)
-    Question.findOne({
+    Answer.findOne({
         _id: req.params.id
     })
-        .then((data_question) => {
-            if (data_question.userId == decode.id) {
+        .then((data_answers) => {
+            if (data_answers.userId == decode.id) {
                 res.status(200).json({
                     message: `tidak boleh vote diri sendiri!`
                 })
             }
             else {
                 let status = false
-                for (let i = 0; i < data_question.dislike.length; i++) {
-                    if (data_question.dislike[i].userId == decode.id) {
+                for (let i = 0; i < data_answers.dislike.length; i++) {
+                    if (data_answers.dislike[i].userId == decode.id) {
                         status = true
                     }
                 }
@@ -203,7 +158,7 @@ const dislikeQuestion = (req, res) => {
                     })
                 }
                 else {
-                    Question.updateOne({
+                    Answer.updateOne({
                         _id: req.params.id
                     }, {
                             $push: { dislike: { userId: decode.id } }
@@ -229,13 +184,12 @@ const dislikeQuestion = (req, res) => {
 }
 
 
+
 module.exports = {
-    createQuestion,
-    getAllQuestion,
-    getOneQuestion,
-    deleteQuestion,
-    getMyQuestions,
-    updateQuestion,
-    likeQuestion,
-    dislikeQuestion
+    createAnswer,
+    getAllAnswer,
+    getOneAnswer,
+    updateAnswer,
+    likeAnswer,
+    dislikeAnswer
 }
