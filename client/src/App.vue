@@ -10,7 +10,7 @@ import Navbar from '@/components/Navbar.vue'
 export default {
   components: {
     Navbar
-  }
+  },
 }
 </script>
 
@@ -19,8 +19,14 @@ export default {
 @import "~vue-wysiwyg/dist/vueWysiwyg.css";
 
 body {
-  background-image: url('./assets/smoke.png');
+  /* background-image: url('./assets/bekgron.png'); */
+  background-repeat: no-repeat;
+  background-size:cover;
+  background-position: 
+  center center;
+  width: 100%;
   background-attachment: fixed;
+  /* background-color: black; */
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

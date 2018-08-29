@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="top">
         <v-jumbotron color="black" dark>
             <v-container fill-height>
             <v-layout align-center>
@@ -71,5 +71,8 @@ export default {
         margin-right: auto;
         /* width: 500px; */
         padding: 10px;
+    }
+    .top {
+        margin-top: -20px;
     }
 </style>
