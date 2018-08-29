@@ -2,8 +2,8 @@ const Question = require('../models/question')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
-const createQuestion = (req,res) => {
-    const { title,description } = req.body
+const createQuestion = (req, res) => {
+    const { title, description } = req.body
     let token = req.headers.token
     let decode = jwt.verify(token, process.env.JWT_KEY)
 
@@ -25,7 +25,7 @@ const createQuestion = (req,res) => {
         });
 }
 
-const getAllQuestion = (req,res) => {
+const getAllQuestion = (req, res) => {
     Question.find()
         .then((data_questions) => {
             res.status(200).json({
@@ -40,7 +40,7 @@ const getAllQuestion = (req,res) => {
         });
 }
 
-const getOneQuestion = (req,res) => {
+const getOneQuestion = (req, res) => {
     let id = req.params.id
 
     Question.findOne({
@@ -59,26 +59,44 @@ const getOneQuestion = (req,res) => {
         });
 }
 
-const deleteQuestion = (req,res) => {
+const deleteQuestion = (req, res) => {
     let id = req.params.id
+    let token = req.headers.token
+    let decode = jwt.verify(token, process.env.JWT_KEY)
 
-    Question.deleteOne({
+    Question.findOne({
         _id: id
     })
-        .then(() => {
-            res.status(201).json({
-                message: `Question Succesfully Deleted!`
-            })
+        .then((result) => {
+            if (result.userId == decode.id) {
+                Question.deleteOne({
+                    _id: id
+                })
+                    .then(() => {
+                        res.status(201).json({
+                            message: `Question Succesfully Deleted!`
+                        })
+                    })
+                    .catch((err) => {
+                        res.status(400).json({
+                            message: err.message
+                        })
+                    });
+            }
+            else {
+                res.status(200).json({
+                    message: `Can't Delete People Question!`
+                })
+            }
         })
         .catch((err) => {
-            console.log(err);
             res.status(400).json({
                 message: err.message
             })
         });
 }
 
-const getMyQuestions = (req,res) => {
+const getMyQuestions = (req, res) => {
     let token = req.headers.token
     let decode = jwt.verify(token, process.env.JWT_KEY)
 
@@ -91,7 +109,7 @@ const getMyQuestions = (req,res) => {
                     message: `Success get all my questions`,
                     data: []
                 })
-            }else {
+            } else {
                 res.status(200).json({
                     message: `Success get all my questions`,
                     data: questions
@@ -104,22 +122,40 @@ const getMyQuestions = (req,res) => {
         });
 }
 
-const updateQuestion = (req,res) => {
-    const { title,description } = req.body
+const updateQuestion = (req, res) => {
+    const { title, description } = req.body
     let id = req.params.id
     let token = req.headers.token
     let decode = jwt.verify(token, process.env.JWT_KEY)
-    Question.updateOne({
-        _id: id,
-        userId: decode.id
-    },{
-        title: title,
-        description: description
+
+    Question.findOne({
+        _id: id
     })
-        .then(() => {
-            res.status(201).json({
-                message: `Successfully update a Question`,
-            })
+        .then((result) => {
+            if (result.userId == decode.id) {
+                Question.updateOne({
+                    _id: id,
+                    userId: decode.id
+                }, {
+                        title: title,
+                        description: description
+                    })
+                    .then(() => {
+                        res.status(201).json({
+                            message: `Successfully update a Question`,
+                        })
+                    })
+                    .catch((err) => {
+                        res.status(400).json({
+                            message: err.message
+                        })
+                    });
+            }
+            else {
+                res.status(400).json({
+                    message: err.message
+                })
+            }
         })
         .catch((err) => {
             res.status(400).json({

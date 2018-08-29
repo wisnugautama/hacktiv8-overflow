@@ -12,6 +12,7 @@ export default new Router({
       name: 'home',
       component: Home,
       children: [
+        { path: '', component: () => import('./components/Carousel.vue') },
         { path: '/register', component: () => import('./components/Register.vue') },
         { path: '/login', component: () => import('./components/Login.vue') }
       ]

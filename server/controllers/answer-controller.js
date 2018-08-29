@@ -65,16 +65,35 @@ const updateAnswer = (req, res) => {
     const { answer } = req.body
     let token = req.headers.token
     let decode = jwt.verify(token, process.env.JWT_KEY)
-    Answer.update({
-        _id: req.params.id,
-        userId: decode.id
-    }, {
-            answer: answer
-        })
+    Answer.findOne({
+        _id: req.params.id
+    })
         .then((result) => {
-            res.status(201).json({
-                message: `answer successfully updated`
-            })
+            console.log(result);
+            console.log(decode.id);
+            if (result.userId == decode.id) {
+                Answer.update({
+                    _id: req.params.id,
+                    userId: decode.id
+                }, {
+                        answer: answer
+                    })
+                    .then((result) => {
+                        res.status(201).json({
+                            message: `answer successfully updated`
+                        })
+                    })
+                    .catch((err) => {
+                        res.status(400).json({
+                            message: err.message
+                        })
+                    });
+            }
+            else {
+                res.status(200).json({
+                    message: `You cant Edit People's Answer!`
+                })
+            }
         })
         .catch((err) => {
             res.status(400).json({

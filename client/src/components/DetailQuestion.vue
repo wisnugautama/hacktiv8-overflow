@@ -12,7 +12,7 @@
                 <v-container>
                     <h2>Please Answer Here</h2>
                     <br>
-                    <wysiwyg v-if="check_login" v-model="answerNew" />
+                    <wysiwyg v-if="check_login" v-model="answerNew" class="he" />
                     <div v-if="!check_login">
                         <h3>Please Login First to Answer</h3>
                         <v-btn color="blue" to="/login">Login</v-btn>
@@ -20,9 +20,9 @@
                 </v-container>
                 <v-card-actions>
                 <v-btn flat color="orange" to="/forum">Back</v-btn>
-                <v-btn flat color="orange" @click="submitAnswer">Answer</v-btn>
-                <v-btn flat color="orange" @click="likeQuestion(question._id)">Like</v-btn>
-                <v-btn flat color="orange" @click="dislikeQuestion(question._id)">Dislike</v-btn>
+                <v-btn flat v-if="token" color="orange" @click="submitAnswer">Answer</v-btn>
+                <v-btn flat v-if="token" color="orange" @click="likeQuestion(question._id)">Like : {{ question.like.length }}</v-btn>
+                <v-btn flat v-if="token" color="orange" @click="dislikeQuestion(question._id)">Dislike : {{ question.dislike.length }}</v-btn>
                 </v-card-actions>
             </v-card>
             </v-flex>
@@ -51,7 +51,8 @@ export default {
     computed: {
         ...mapState({
             question: 'question',
-            answer: 'answer'
+            answer: 'answer',
+            token: 'token'
         })
     },
 
@@ -114,6 +115,12 @@ export default {
 </script>
 
 <style scoped>
+    .tes {
+        background-color: gainsboro;
+    }
 
+    .he {
+        background-color: white
+    }
     
 </style>

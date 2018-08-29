@@ -95,6 +95,7 @@ export default new Vuex.Store({
           swal(result.data.message)
           localStorage.setItem('token', result.data.token)
           context.commit('setToken', localStorage.getItem('token'))
+          context.commit('setUserLogin',result.data.email)
           router.push('/')
         })
         .catch((err) => {
@@ -104,6 +105,7 @@ export default new Vuex.Store({
 
     logout(context,data) {
       localStorage.removeItem('token')
+      context.commit('setToken', '')
       router.push('/')
     },
 

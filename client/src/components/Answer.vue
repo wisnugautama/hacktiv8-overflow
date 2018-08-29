@@ -14,10 +14,10 @@
                 </div>
                 </v-card-title>
 
-                <v-card-actions>
-                <v-btn flat color="orange" :to="`/forum/answer/${data._id}`">Update</v-btn>
-                <v-btn flat @click="likeAnswer(data._id)">Like</v-btn>
-                <v-btn flat @click="dislikeAnswer(data._id)">Dislike</v-btn>
+                <v-card-actions v-if="token">
+                <v-btn v-if="user_login === data.userId.email" flat color="orange" :to="`/forum/answer/${data._id}`">Update</v-btn>
+                <v-btn flat @click="likeAnswer(data._id)">Like : {{ data.like.length }}</v-btn>
+                <v-btn flat @click="dislikeAnswer(data._id)">Dislike : {{ data.dislike.length }}</v-btn>
                 </v-card-actions>
                 
             </v-card>
@@ -33,12 +33,19 @@ import swal from 'sweetalert2';
 export default {
     data() {
         return {
-            user_login: '',
-            yangBuat: this.created
+            tes: this.user_login
         }
     },
 
     props:['answerProps'],
+
+    computed: {
+        ...mapState([
+            'token',
+            'user_login'
+        ])
+    },
+
     methods: {
         ...mapActions([
             'getAllAnswer'
@@ -53,7 +60,6 @@ export default {
                 }
             })
                 .then((result) => {
-                    console.log(result);
                     swal(result.data.message)
                 })
                 .catch((err) => {
@@ -71,6 +77,7 @@ export default {
             })
                 .then((result) => {
                     console.log(result);
+                    console.log(this.user_login);
                     swal(result.data.message)
                 })
                 .catch((err) => {
@@ -79,11 +86,6 @@ export default {
         }
     },
 
-    computed: {
-        ...mapState({
-            created: 'created'
-        })
-    },
 
     watch: {
         answerProps: function () {

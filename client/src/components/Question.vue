@@ -1,10 +1,10 @@
 <template>
-    <v-container>
+    <v-container class="kontener">
         <h1>All Questions</h1>
         <br>
-        <v-layout>
-            <v-flex>
-            <v-card v-for="(data,i) in question_list" v-bind:key="i" class="tes">
+        <v-layout align-start justify-start row fill-height wrap>
+            <v-flex xs12 sm6 v-for="(data,i) in question_list" v-bind:key="i" class="tes">
+            <v-card class="ho">
                 <v-card-title primary-title>
                 <div class="kontent">
                     <h3 class="headline mb-0"> {{ data.title }} </h3>
@@ -15,7 +15,7 @@
 
                 <v-card-actions>
                     <router-link :to="`/forum/question/${data._id}`">
-                        <v-btn flat color="orange">Show</v-btn>
+                        <v-btn flat color="orange">Show Detail</v-btn>
                     </router-link>
                 </v-card-actions>
                 
@@ -51,10 +51,23 @@ export default {
 <style scoped>
     .tes {
         margin-bottom: 50px;
+        /* background-color: gainsboro; */
+        color: black;
         
     }
 
     .kontent {
         min-width: 100%;
+        min-height: 80px;
+        /* margin-right: 200px; */
+    }
+
+    .kontener {
+        color: black;
+    }
+
+    .ho {
+       margin-right: 20px; 
+       background-color: gainsboro;
     }
 </style>

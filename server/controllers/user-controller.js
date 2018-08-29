@@ -46,14 +46,14 @@ const login = (req,res) => {
         email: email
     })
         .then((data_user) => {
-            console.log(data_user._id);
             if (data_user) {
                 let check_pass = bcrypt.compareSync(password, data_user.password);
                 if (check_pass) {
                     let token = jwt.sign( { id: data_user._id, name: data_user.name, email: data_user.email}, process.env.JWT_KEY)
                     res.status(200).json({
                         message: `Login Success!`,
-                        token
+                        token,
+                        email: data_user.email
                     })
                 }
                 else {
